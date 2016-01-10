@@ -1,8 +1,6 @@
 <?php
-// Make sure no one attempts to run this script "directly"
-if (!defined('PUN')) {
-    exit;
-}
+if (! defined('PUN')) exit; // Make sure no one attempts to run this script "directly"
+define('PUN_HEADER', 1);
 
 $pun_xhtml = stripos(isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : '', 'application/xhtml+xml') ? 'application/xhtml+xml' : 'text/html';
 
@@ -13,7 +11,17 @@ header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache'); // For HTTP/1.0 compability
 header('Content-Type: ' . $pun_xhtml . '; charset=UTF-8');
 
-// Load the template
+require_once PUN_ROOT . 'include/PunTemplate.php';
+$smarty = new PunTemplate($pun_user['style_wap']);
+$smarty->assign('pun_start', $pun_start);
+$smarty->assign('pun_config', $pun_config);
+$smarty->assign('pun_user', $pun_user);
+$smarty->assign('date_format', '%Y.%m.%d %H:%I');
+$smarty->assign('lang_common', $lang_common);
+$smarty->assign('pun_xhtml', $pun_xhtml);
+$smarty->assign('basename', $basename = basename($_SERVER['PHP_SELF']));
+
+// Load the lyout
 if (defined('PUN_ADMIN_CONSOLE')) {
     $tpl_main = file_get_contents(PUN_ROOT . 'include/template/admin.tpl');
 } else if (defined('PUN_HELP')) {
@@ -214,5 +222,3 @@ if ($pun_config['o_announcement'] == 1) {
 
 // START SUBST - <pun_main>
 ob_start();
-
-define('PUN_HEADER', 1);
